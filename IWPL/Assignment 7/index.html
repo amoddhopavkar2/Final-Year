@@ -1,0 +1,158 @@
+<html ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Report</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link href="https://s3.amazonaws.com/codecademy-content/projects/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="invoice.css">
+
+</head>
+<!--<body  ng-app="myApp" ng-controller="myCtrl">-->
+<body  ng-controller="myCtrl">
+<p id="para1">INVOICE</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="invoice-title">
+                        <h2>Invoice</h2><input type="text" ng-model="person.invoice_number">
+                        <div id="mylogo">
+                           <img ng-src="logo1.png" ng-hide="tae" ></img><br/>
+                            hide/show logo<input type="checkbox"  ng-model="tae">
+                        </div>
+
+
+
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <address>
+                                <strong>Billed To:</strong><br>
+                                <input type="text" ng-model="person.customer_info.name"><br>
+                                <input type="text" ng-model="person.customer_info.web_link"><br>
+                                <input type="text" ng-model="person.customer_info.address1"><br>
+                                <input type="text" ng-model="person.customer_info.address2"><br>
+                                <input type="text" ng-model="person.customer_info.postal">
+                            </address>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <address>
+                                <strong>Shipped To:</strong><br>
+                             <input type="text" ng-model="person.company_info.name"><br>
+                             <input type="text" ng-model="person.company_info.web_link"><br>
+                             <input type="text" ng-model="person.company_info.address1"><br>
+                             <input type="text" ng-model="person.company_info.address2"><br>
+                             <input type="text" ng-model="person.customer_info.postal">
+                            </address>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <address>
+                                <strong>Payment Method:</strong><br>
+                                <select  ng-model="selected" ng-options="x.name for x in person.country_currency">{{selected.name}} </select><br>
+                               <input type="text" ng-model="person.payment_info.Account_no"><br>
+                              <input type="text" ng-model="person.payment_info.email">
+                            </address>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <address>
+                                <strong>Order Date:</strong><br>
+                                {{today | date}}<br><br>
+                            </address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><strong>Order summary</strong></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <td>#</td>
+                                        <td><strong>Item</strong></td>
+                                        <td class="text-center"><strong>Quantity</strong></td>
+                                        <td class="text-center"><strong>Price{{" "+selected.symbol}}</strong></td>
+                                        <td class="text-right"><strong>Totals</strong></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                    <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                                    <tr ng-repeat="item in person.items">
+                                        <td text-align="center"><button class="bg_none" href="" ng-click="removeItem()"><i class="glyphicon glyphicon-remove-circle"></i> </button></td>
+                                        <td><input type="text" ng-model="item.description" placeholder="Description"></td>
+                                        <td><input type="number" ng-model="item.qty" placeholder="10"></td>
+                                        <td><input type="number" ng-model="item.cost" placeholder="10"></td>
+                                        <td placeholder="0">{{item.qty*item.cost}}</td>
+                                    </tr>
+
+                                    <!--<tr><td text-align="center"><a class="btn"  style="background-color:green;" href ng-click="addItem()">[+]</a></td>-->
+                                    <tr><td text-align="center"><button class="bg_none" href="" ng-click="addItem()"><i class="glyphicon glyphicon-ok-circle"></i> </button></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td></tr>
+
+
+
+
+                                    <!--<tr>
+                                        <td>[+/-]</td>
+                                        <td>BS-400</td>
+                                        <td class="text-center">3</td>
+                                        <td class="text-center">$20.00</td>
+                                        <td class="text-right">$60.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>[+/-]</td>
+                                        <td>BS-1000</td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">$600.00</td>
+                                        <td class="text-right">$600.00</td>
+                                    </tr>-->
+                                    <tr>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line text-center"><strong>Subtotal</strong></td>
+                                        <td class="thick-line text-right"><p>{{subTotal()| currency: selected.symbol}}</p></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line text-center"><strong>Shipping<input type="number" name="quantity"  min='5' max='25' step='1'ng-model="person.tax"></strong></td>
+                                        <td class="no-line text-right"><p>{{calcuteTax()}}</p></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="no-line text-center"><strong>Total</strong></td>
+                                        <td class="no-line text-right"><p>{{grandTotal()}}</p></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+</div>
+
+</body>
+<script type="text/javascript" src="invoice.js"></script>
+</html>
